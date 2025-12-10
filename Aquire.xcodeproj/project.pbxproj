@@ -30,6 +30,7 @@
 		72D342002EE8149D007D90EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D341FF2EE8149D007D90EA /* SettingsView.swift */; };
 		72D342022EE820B3007D90EA /* WishlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D342012EE820B3007D90EA /* WishlistView.swift */; };
 		72F092AF2EE8B84200007252 /* AdvancaLink.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 72F092AE2EE8B84200007252 /* AdvancaLink.usdz */; };
+		DA26AA292EE9DD4F00D04B46 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA26AA282EE9DD4F00D04B46 /* SearchBarView.swift */; };
 		DAA432DC2EE911690040BE9C /* DebugPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA432DB2EE911690040BE9C /* DebugPanelView.swift */; };
 		DAA432E02EE928910040BE9C /* ProductCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA432DF2EE928910040BE9C /* ProductCard.swift */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,7 @@
 		72D341FF2EE8149D007D90EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		72D342012EE820B3007D90EA /* WishlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistView.swift; sourceTree = "<group>"; };
 		72F092AE2EE8B84200007252 /* AdvancaLink.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = AdvancaLink.usdz; sourceTree = "<group>"; };
+		DA26AA282EE9DD4F00D04B46 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		DAA432DB2EE911690040BE9C /* DebugPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelView.swift; sourceTree = "<group>"; };
 		DAA432DF2EE928910040BE9C /* ProductCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,6 +115,7 @@
 				DAA432DF2EE928910040BE9C /* ProductCard.swift */,
 				72D341F82EE7F5EF007D90EA /* StoreModel.swift */,
 				72D341FA2EE805FA007D90EA /* UIHelpers.swift */,
+				DA26AA282EE9DD4F00D04B46 /* SearchBarView.swift */,
 				721583AA2EE7F4C400CC1DDF /* OrdersView.swift */,
 				721583AC2EE7F4D700CC1DDF /* ModelQuickLookView.swift */,
 				7239CFCA2EE8494E00934C1D /* InfoView.swift */,
@@ -224,6 +227,7 @@
 				72D341FD2EE807DC007D90EA /* ApplePayButton.swift in Sources */,
 				721583A92EE7F4AF00CC1DDF /* AcquiredView.swift in Sources */,
 				DAA432DC2EE911690040BE9C /* DebugPanelView.swift in Sources */,
+				DA26AA292EE9DD4F00D04B46 /* SearchBarView.swift in Sources */,
 				721583A72EE7F47700CC1DDF /* ProductDetailView.swift in Sources */,
 				72D342022EE820B3007D90EA /* WishlistView.swift in Sources */,
 				DAA432E02EE928910040BE9C /* ProductCard.swift in Sources */,
@@ -355,14 +359,14 @@
 		72C9DF202EE7BFAA00F3E164 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = Aquire/Aquire.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = BETA;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"Aquire/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Aquire/Preview\\ Content Aquire/Assets.xcassets";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
@@ -421,14 +425,14 @@
 		72C9DF212EE7BFAA00F3E164 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = Aquire/Aquire.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = BETA;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"Aquire/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Aquire/Preview\\ Content Aquire/Assets.xcassets";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;

@@ -265,3 +265,64 @@ extension View {
         }
     }
 }
+// MARK: - Capsule Chrome (iOS 18-ish pills / search bars)
+
+private struct AquireCapsuleBackground: View {
+    let emphasized: Bool
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: 999, style: .continuous)
+
+        shape
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(emphasized ? 0.14 : 0.07),
+                        Color.white.opacity(emphasized ? 0.02 : 0.0)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay(
+                shape
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.80),
+                                Color.white.opacity(0.18)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: emphasized ? 1.4 : 1.0
+                    )
+            )
+            .shadow(
+                color: Color.black.opacity(emphasized ? 0.65 : 0.45),
+                radius: emphasized ? 14 : 8,
+                x: 0,
+                y: emphasized ? 9 : 5
+            )
+    }
+}
+
+private struct CapsuleChromeModifier: ViewModifier {
+    let emphasized: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, emphasized ? 18 : 14)
+            .padding(.vertical, emphasized ? 10 : 8)
+            .background(
+                AquireCapsuleBackground(emphasized: emphasized)
+            )
+    }
+}
+
+extension View {
+    /// Wraps content in that white-outlined, glossy pill like Apple’s search / Today controls.
+    func capsuleChrome(emphasized: Bool = false) -> some View {
+        modifier(CapsuleChromeModifier(emphasized: emphasized))
+    }
+}

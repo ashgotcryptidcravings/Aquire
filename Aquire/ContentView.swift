@@ -6,7 +6,6 @@ struct ContentView: View {
     @AppStorage("Aquire_isLoggedIn") private var isLoggedIn: Bool = false
     @AppStorage("Aquire_userEmail") private var storedEmail: String = ""
     @AppStorage("Aquire_debugOverlayEnabled") private var debugOverlayEnabled: Bool = false
-    @AppStorage("Aquire_developerUnlocked") private var developerUnlocked: Bool = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -18,9 +17,7 @@ struct ContentView: View {
                     .padding()
             }
 
-            if developerUnlocked {
-                debugToggleButton
-            }
+            debugToggleButton
         }
         .environmentObject(store)
     }
@@ -36,7 +33,6 @@ struct ContentView: View {
             MacRootView(userEmail: storedEmail)
             #endif
         } else {
-            // NEW CALL – no closure, just bindings
             LoginView(isLoggedIn: $isLoggedIn, storedEmail: $storedEmail)
         }
     }
@@ -44,78 +40,35 @@ struct ContentView: View {
     // MARK: - Debug toggle
 
     private var debugToggleButton: some View {
-        IconGlassButton(
-            systemName: debugOverlayEnabled ? "ladybug.fill" : "ladybug",
-            size: 30
-        ) {
+        Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 debugOverlayEnabled.toggle()
             }
+        } label: {
+            Image(systemName: debugOverlayEnabled ? "ladybug.fill" : "ladybug")
+                .font(.system(size: 16, weight: .semibold))
+                .padding(10)
+                .background(.ultraThinMaterial)
+                .clipShape(Circle())
+                .shadow(radius: 6)
+                .padding()
         }
-        .padding(.top, 8)
-        .padding(.trailing, 12)
     }
 }
 
 #if os(iOS)
-// MARK: - iOS: TabView root
+// MARK: - iOS: Custom floating tab root
 
 struct IOSTabRootView: View {
     let userEmail: String
     @EnvironmentObject var store: StoreModel
 
-    var body: some View {
-        TabView {
-            HomeView(userEmail: userEmail)
-                .tabItem {
-                    Image(systemName: "star.fill")
-                    Text("Featured")
-                }
-
-            InfoView(userEmail: userEmail)
-                .tabItem {
-                    Image(systemName: "info.circle")
-                    Text("Info")
-                }
-
-            BrowseView(products: store.visibleProducts)
-                .tabItem {
-                    Image(systemName: "square.grid.2x2")
-                    Text("Browse")
-                }
-
-            AcquiredView()
-                .tabItem {
-                    Image(systemName: "shippingbox.fill")
-                    Text("Acquired")
-                }
-
-            OrdersView()
-                .tabItem {
-                    Image(systemName: "list.bullet.rectangle.portrait")
-                    Text("Orders")
-                }
-        }
-        .accentColor(.purple)
-    }
-}
-#endif
-
-#if os(macOS)
-// MARK: - macOS: Sidebar root
-
-@available(macOS 12.0, *)
-struct MacRootView: View {
-    let userEmail: String
-    @EnvironmentObject var store: StoreModel
-
-    @State private var selection: Tab? = .featured
-
-    // Nested enum to avoid global name conflicts
+    // Tabs for iOS – mirrors macOS cases
     enum Tab: String, CaseIterable, Identifiable {
         case featured
         case info
         case browse
+        case wishlist
         case acquired
         case orders
 
@@ -126,6 +79,7 @@ struct MacRootView: View {
             case .featured: return "Featured"
             case .info:     return "Info"
             case .browse:   return "Browse"
+            case .wishlist: return "Wishlist"
             case .acquired: return "Acquired"
             case .orders:   return "Orders"
             }
@@ -136,6 +90,175 @@ struct MacRootView: View {
             case .featured: return "star.fill"
             case .info:     return "info.circle"
             case .browse:   return "square.grid.2x2"
+            case .wishlist: return "heart"
+            case .acquired: return "shippingbox.fill"
+            case .orders:   return "list.bullet.rectangle.portrait"
+            }
+        }
+    }
+
+    @State private var selectedTab: Tab = .featured
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            // Active tab content
+            Group {
+                switch selectedTab {
+                case .featured:
+                    HomeView(userEmail: userEmail)
+
+                case .info:
+                    InfoView(userEmail: userEmail)
+
+                case .browse:
+                    BrowseView(products: store.visibleProducts)
+
+                case .wishlist:
+                    WishlistView()
+
+                case .acquired:
+                    AcquiredView()
+
+                case .orders:
+                    OrdersView()
+                }
+            }
+            .ignoresSafeArea(edges: .bottom)
+
+            // Floating glass tab bar
+            FloatingTabBar(selection: $selectedTab)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
+        }
+    }
+}
+
+/// Glassy, OS-18-style floating tab bar.
+struct FloatingTabBar: View {
+    @Binding var selection: IOSTabRootView.Tab
+
+    private let tabs = IOSTabRootView.Tab.allCases
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ForEach(tabs) { tab in
+                button(for: tab)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.35),
+                                    Color.white.opacity(0.05),
+                                    Color.purple.opacity(0.55)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+                .shadow(color: .black.opacity(0.55),
+                        radius: 22, x: 0, y: 12)
+        )
+    }
+
+    private func button(for tab: IOSTabRootView.Tab) -> some View {
+        let isSelected = (tab == selection)
+
+        return Button {
+            withAnimation(AquireMotion.tap) {
+                selection = tab
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: tab.systemImage)
+                    .font(.system(size: 15, weight: .semibold))
+
+                if isSelected {
+                    Text(tab.title)
+                        .font(.system(size: 13, weight: .semibold))
+                }
+            }
+            .padding(.horizontal, isSelected ? 12 : 10)
+            .padding(.vertical, 8)
+            .foregroundColor(isSelected ? .white : .white.opacity(0.7))
+            .background(
+                Group {
+                    if isSelected {
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.purple,
+                                        Color(red: 0.9, green: 0.45, blue: 1.0)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.white.opacity(0.35), lineWidth: 0.8)
+                            )
+                    } else {
+                        Capsule()
+                            .fill(Color.white.opacity(0.04))
+                    }
+                }
+            )
+            .shadow(color: isSelected ? Color.purple.opacity(0.6) : .clear,
+                    radius: 10, x: 0, y: 6)
+        }
+        .buttonStyle(PressableScaleStyle(scaleAmount: 0.9))
+    }
+}
+#endif
+
+// MARK: - macOS: Sidebar root (unchanged, just kept here)
+
+#if os(macOS)
+@available(macOS 12.0, *)
+struct MacRootView: View {
+    let userEmail: String
+    @EnvironmentObject var store: StoreModel
+
+    @State private var selection: Tab? = .featured
+
+    enum Tab: String, CaseIterable, Identifiable {
+        case featured
+        case info
+        case browse
+        case wishlist
+        case acquired
+        case orders
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .featured: return "Featured"
+            case .info:     return "Info"
+            case .browse:   return "Browse"
+            case .wishlist: return "Wishlist"
+            case .acquired: return "Acquired"
+            case .orders:   return "Orders"
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .featured: return "star.fill"
+            case .info:     return "info.circle"
+            case .browse:   return "square.grid.2x2"
+            case .wishlist: return "heart"
             case .acquired: return "shippingbox.fill"
             case .orders:   return "list.bullet.rectangle.portrait"
             }
@@ -149,8 +272,6 @@ struct MacRootView: View {
         }
         .navigationTitle("")
     }
-
-    // MARK: Sidebar
 
     private var sidebar: some View {
         List(selection: $selection) {
@@ -167,8 +288,6 @@ struct MacRootView: View {
         .background(Color(red: 0.05, green: 0.05, blue: 0.05))
     }
 
-    // MARK: Content area
-
     @ViewBuilder
     private var contentArea: some View {
         switch selection ?? .featured {
@@ -180,6 +299,9 @@ struct MacRootView: View {
 
         case .browse:
             BrowseView(products: store.visibleProducts)
+
+        case .wishlist:
+            WishlistView()
 
         case .acquired:
             AcquiredView()
